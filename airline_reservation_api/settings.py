@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'bookings',
     'flights',
+    'flights_model',
     'airports'
 ]
 
