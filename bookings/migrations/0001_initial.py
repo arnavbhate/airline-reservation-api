@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Booking',
             fields=[
-                ('booking_class', models.CharField(choices=[('E', 'Economy'), ('F', 'First Class'), ('B', 'Business Class')], default='E', max_length=1)),
+                ('booking_class', models.CharField(choices=[('E', 'Economy Class'), ('F', 'First Class'), ('B', 'Business Class')], default='E', max_length=1)),
                 ('pnr', models.CharField(max_length=6, primary_key=True, serialize=False)),
                 ('date', models.DateField()),
                 ('list_of_passengers', models.JSONField(default=list)),

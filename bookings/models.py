@@ -4,14 +4,14 @@ from flights.models import Flight
 class Booking(models.Model):
 
     class BookingClasses(models.TextChoices):
-        Economy = 'E', 'Economy'
+        EconomyClass = 'E', 'Economy Class'
         FirstClass = 'F', 'First Class'
         BusinessClass = 'B', 'Business Class'
 
     booking_class = models.CharField(
         max_length=1,
         choices=BookingClasses.choices,
-        default=BookingClasses.Economy,
+        default=BookingClasses.EconomyClass,
     )
 
     pnr = models.CharField(max_length=6, primary_key=True)
