@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from .models import Booking
-from django.shortcuts import api_view
+from rest_framework.decorators import api_view
 from rest_framework import status
-from django.shortcuts import Response
+from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 import uuid
 from .serializers import BookingSerializer
@@ -21,7 +21,7 @@ def create_booking(req):
     if not flight_code or not booking_class or not date or (list_of_passengers == []):
         return Response({"error" : "Incomplete Fields"}, status=status.HTTP_400_BAD_REQUEST)
     #generate pnr
-    pnr = str(uuid.uuid4())[:6]
+    pnr = str(uuid.uuid4())[:6].upper()
     #assign pnr
     data["pnr"] = pnr
     #check and save or raise error
@@ -34,21 +34,19 @@ def create_booking(req):
     
 #get request to view entry
 @api_view(['GET'])
-def view_booking(req):
-    #extract data
-    data = req.data
+def view_booking(pnr):
     #retrieve entry and then return entry
-    booking = get_object_or_404(Booking, pnr=data["pnr"])
+    booking = get_object_or_404(Booking, pnr=pnr)
     serializer = BookingSerializer(booking)
     return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
 #put request to update entry (assuming since put, every field is given again instead of just the update fields)
 @api_view(['PUT'])
-def update_booking(req):
+def update_booking(req, pnr):
     #extract data
     data = req.data
     #retrieve required entry
-    booking = get_object_or_404(Booking, pnr=data["pnr"])
+    booking = get_object_or_404(Booking, pnr=pnr)
     #modify
     serializer = BookingSerializer(booking, data=data)
     #check then update or raise error
@@ -58,3 +56,12 @@ def update_booking(req):
     else:
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
     
+
+@api_view(['DELETE'])
+def delete_booking(pnr):
+    #find required entry
+    booking = get_object_or_404(Booking, pnr=pnr)
+    #delete entry
+    booking.delete()
+    #return response
+    return Response({"message" : "deletion successful"}, status=status.HTTP_200_OK)

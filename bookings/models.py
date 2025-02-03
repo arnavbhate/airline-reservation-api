@@ -18,6 +18,7 @@ class Booking(models.Model):
     flight_code = models.ForeignKey(Flight, on_delete=models.CASCADE)
     date = models.DateField()
     list_of_passengers = models.JSONField(default=list) #can add data like age, name etc from front end
+    seats_booked = models.IntegerField(default=0) #to count the no. of seats booked
     
     def __str__(self):
         return "Booking of" + self.pnr
