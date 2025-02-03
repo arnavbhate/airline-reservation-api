@@ -66,7 +66,6 @@ class BookingSerializer(serializers.ModelSerializer):
         #get basic info
         new_flight = Flight.objects.get(flight_no=old_data.get('flight_code'))
         new_booking_class = new_data.get('booking_class')
-        old_booking_class = old_data.get('booking_class')
         no_of_seats = len(list_of_passengers)
         date = new_data.get('date')
 
