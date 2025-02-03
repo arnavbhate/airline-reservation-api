@@ -61,7 +61,7 @@ class BookingSerializer(serializers.ModelSerializer):
         no_of_seats = len(list_of_passengers)
         date = new_data.get('date')
         #disabling ability to change list of passengers
-        new_data['list_of_passengers'] = list
+        new_data['list_of_passengers'] = list_of_passengers
 
         #checking if enough no of seats are available for change in new flight
         if getattr(new_flight, self.classes.get(new_booking_class)) < no_of_seats + Booking.objects.filter(flight_code=new_flight, booking_class=new_booking_class, date=date).aggregate(Sum('seats_booked'))['seats_booked__sum']:
