@@ -9,12 +9,7 @@ class PassengerSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=50)
     last_name = serializers.CharField(max_length=50)
     title = serializers.ChoiceField(choices=[('Mr.', 'Mr.'), ('Ms.', 'Ms.'), ('Mrs.', 'Mrs.'), ('Dr.', 'Dr.')])
-    date_of_birth = serializers.DateField()
-
-    def validate_date_of_birth(self, value):
-        if value > date.today():
-            raise serializers.ValidationError("You weren't born in the future!")
-        return value
+    age = serializers.IntegerField(max_value=None, min_value=1)
 
 
 class BookingSerializer(serializers.ModelSerializer):
@@ -59,15 +54,14 @@ class BookingSerializer(serializers.ModelSerializer):
 
     #updates for put request
     def update(self, old_data, new_data):
-        #preliminary check
-        list_of_passengers = new_data.get('list_of_passengers')
-        if old_data.get('list_of_passengers') != list_of_passengers:
-            raise serializers.ValidationError("Can't change passenger info")
         #get basic info
+        list_of_passengers = old_data.get('list_of_passengers')
         new_flight = Flight.objects.get(flight_no=old_data.get('flight_code'))
         new_booking_class = new_data.get('booking_class')
         no_of_seats = len(list_of_passengers)
         date = new_data.get('date')
+        #disabling ability to change list of passengers
+        new_data['list_of_passengers'] = list
 
         #checking if enough no of seats are available for change in new flight
         if getattr(new_flight, self.classes.get(new_booking_class)) < no_of_seats + Booking.objects.filter(flight_code=new_flight, booking_class=new_booking_class, date=date).aggregate(Sum('seats_booked'))['seats_booked__sum']:
