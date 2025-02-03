@@ -34,7 +34,7 @@ def create_booking(req):
     
 #get request to view entry
 @api_view(['GET'])
-def view_booking(pnr):
+def view_booking(req, pnr):
     #retrieve entry and then return entry
     booking = get_object_or_404(Booking, pnr=pnr)
     serializer = BookingSerializer(booking)
@@ -58,7 +58,7 @@ def update_booking(req, pnr):
     
 
 @api_view(['DELETE'])
-def delete_booking(pnr):
+def delete_booking(req, pnr):
     #find required entry
     booking = get_object_or_404(Booking, pnr=pnr)
     #delete entry
