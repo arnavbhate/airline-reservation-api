@@ -48,6 +48,8 @@ def update_booking(req, pnr):
     #retrieve required entry
     booking = get_object_or_404(Booking, pnr=pnr)
     #modify
+    data['pnr'] = pnr
+    data['list_of_passengers'] = booking.list_of_passengers
     serializer = BookingSerializer(booking, data=data)
     #check then update or raise error
     if serializer.is_valid():
