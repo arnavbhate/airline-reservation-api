@@ -22,7 +22,7 @@ class BookingSerializer(serializers.ModelSerializer):
 
     #checking basic fields
     booking_class = serializers.ChoiceField(choices=Booking.BookingClasses.choices)
-    flight_code = serializers.CharField(max_length=6)
+    flight = serializers.PrimaryKeyRelatedField(queryset=Flight.objects.all())
     date = serializers.DateField()
     list_of_passengers = PassengerSerializer(many=True)
     
@@ -42,12 +42,12 @@ class BookingSerializer(serializers.ModelSerializer):
         #calc the no of seats booked
         data['seats_booked'] = len(data.get('list_of_passengers'))
         #get basic info
-        flight = Flight.objects.get(flight_no=data.get('flight_code'))
+        flight = data.get('flight')
         booking_class = data.get('booking_class')
         no_of_seats = len(data.get('list_of_passengers'))
         date = data.get('date')
         #check if enough seats are available
-        if getattr(flight, self.classes.get(booking_class)) < no_of_seats + Booking.objects.filter(flight_code=flight, booking_class=booking_class, date=date).aggregate(Sum('seats_booked'))['seats_booked__sum']:
+        if getattr(flight, self.classes.get(booking_class)) < no_of_seats + Booking.objects.filter(flight=flight, booking_class=booking_class, date=date).aggregate(Sum('seats_booked'))['seats_booked__sum']:
             raise serializers.ValidationError("Not enough seats are available")
 
         return data
@@ -56,7 +56,7 @@ class BookingSerializer(serializers.ModelSerializer):
     def update(self, old_data, new_data):
         #get basic info
         list_of_passengers = old_data.get('list_of_passengers')
-        new_flight = Flight.objects.get(flight_no=old_data.get('flight_code'))
+        new_flight = new_data.get('flight')
         new_booking_class = new_data.get('booking_class')
         no_of_seats = len(list_of_passengers)
         date = new_data.get('date')
@@ -64,7 +64,7 @@ class BookingSerializer(serializers.ModelSerializer):
         new_data['list_of_passengers'] = list_of_passengers
 
         #checking if enough no of seats are available for change in new flight
-        if getattr(new_flight, self.classes.get(new_booking_class)) < no_of_seats + Booking.objects.filter(flight_code=new_flight, booking_class=new_booking_class, date=date).aggregate(Sum('seats_booked'))['seats_booked__sum']:
+        if getattr(new_flight, self.classes.get(new_booking_class)) < no_of_seats + Booking.objects.filter(flight=new_flight, booking_class=new_booking_class, date=date).aggregate(Sum('seats_booked'))['seats_booked__sum']:
             #raise error if not
             raise serializers.ValidationError("Not enough available seats.")
         
