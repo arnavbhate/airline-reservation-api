@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import list_flights, retrieve_flight, update_seat_count
+from .views import list_flights, retrieve_flight
 
 urlpatterns = [
     path('', list_flights, name='list_flights'),  # List & Filter Flights
