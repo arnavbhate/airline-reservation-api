@@ -13,10 +13,6 @@ def list_flights(request):
     # Extract filter parameters from request
     departure_airport = request.GET.get('departure_airport')
     arrival_airport = request.GET.get('arrival_airport')
-    departure_time = request.GET.get('departure_time')
-    min_economy_seats = request.GET.get('min_economy_seats')
-    min_business_seats = request.GET.get('min_business_seats')
-    min_first_class_seats = request.GET.get('min_first_class_seats')
 
     # Apply filters if parameters are provided
     if departure_airport:
